@@ -105,13 +105,13 @@ app.delete(
 
 // 404 error
 app.all("*", (req, res, next) => {
-  next(new ExpressError("Page Not Found!", 404));
+  next(new ExpressError("Page Not Found", 404));
 });
 
 // error handling
 app.use((err, req, res, next) => {
   const { statusCode = 500, message = "Something Went Wrong!" } = err;
-  res.status(statusCode).send(message);
+  res.status(statusCode).render("error.ejs", { err });
 });
 
 // server start
