@@ -80,6 +80,11 @@ app.delete("/campgrounds/:id", async (req, res) => {
   res.redirect("/campgrounds");
 });
 
+// error handling
+app.use((err, req, res, next) => {
+  res.send("Something went wrong!");
+});
+
 // server start
 app.listen(3000, () => {
   console.log("Port 3000 Open");
