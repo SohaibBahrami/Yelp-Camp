@@ -29,13 +29,29 @@ app.set("views", path.join(__dirname, "/views"));
 import Campground from "./models/campground.js";
 app.use(express.static("/seeds/index.js"));
 import wrapAsync from "./utilities/wrapAsync.js";
-import expressError from "./utilities/expressError.js";
+import ExpressError from "./utilities/expressError.js";
 // importing ejs-mate
 import engine from "ejs-mate";
-import ExpressError from "./utilities/expressError.js";
 app.engine("ejs", engine);
 
 //* App Codes
+
+// defining middleware for JOI error handling
+const validateCampground = (req, res, next) => {
+  const campgroundSchema = Joi.object({
+    campground: Joi.object({
+      title: Joi.string().required(),
+      location: Joi.string().required(),
+      image: Joi.string().required(),
+      price: Joi.number().required().min(0),
+    }).required(),
+  });
+  const { error } = campgroundSchema.validate(req.body);
+  if (error) {
+    const msg = error.details.map((el) => el.message).join(",");
+    throw new ExpressError(msg, 400);
+  }
+};
 
 // home pages
 app.get("/", (req, res) => {
@@ -58,19 +74,6 @@ app.get("/campgrounds/new", (req, res) => {
 app.post(
   "/campgrounds",
   wrapAsync(async (req, res, next) => {
-    const campgroundSchema = Joi.object({
-      campground: Joi.object({
-        title: Joi.string().required(),
-        location: Joi.string().required(),
-        image: Joi.string().required(),
-        price: Joi.number().required().min(0),
-      }).required(),
-    });
-    const { error } = campgroundSchema.validate(req.body);
-    if (error) {
-      const msg = error.details.map((el) => el.message).join(",");
-      throw new expressError(msg, 400);
-    }
     const campground = new Campground(req.body.campground);
     await campground.save();
     res.redirect(`/campgrounds/${campground._id}`);
@@ -127,7 +130,7 @@ app.use((err, req, res, next) => {
   res.status(statusCode).render("error.ejs", { err });
 });
 
-// server start
+// port start
 app.listen(3000, () => {
   console.log("Port 3000 Open");
 });
