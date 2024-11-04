@@ -39,10 +39,13 @@ app.get("/", (req, res) => {
   res.render("home.ejs");
 });
 
-app.get("/campgrounds", async (req, res) => {
-  const campgrounds = await Campground.find({});
-  res.render("campgrounds/index.ejs", { campgrounds });
-});
+app.get(
+  "/campgrounds",
+  wrapAsync(async (req, res, next) => {
+    const campgrounds = await Campground.find({});
+    res.render("campgrounds/index.ejs", { campgrounds });
+  })
+);
 
 // add
 app.get("/campgrounds/new", (req, res) => {
@@ -59,31 +62,43 @@ app.post(
 );
 
 // show
-app.get("/campgrounds/:id", async (req, res) => {
-  const campground = await Campground.findById(req.params.id);
-  res.render("campgrounds/show.ejs", { campground });
-});
+app.get(
+  "/campgrounds/:id",
+  wrapAsync(async (req, res, next) => {
+    const campground = await Campground.findById(req.params.id);
+    res.render("campgrounds/show.ejs", { campground });
+  })
+);
 
 // edit
-app.get("/campgrounds/:id/edit", async (req, res) => {
-  const campground = await Campground.findById(req.params.id);
-  res.render("campgrounds/edit.ejs", { campground });
-});
+app.get(
+  "/campgrounds/:id/edit",
+  wrapAsync(async (req, res, next) => {
+    const campground = await Campground.findById(req.params.id);
+    res.render("campgrounds/edit.ejs", { campground });
+  })
+);
 
-app.put("/campgrounds/:id", async (req, res) => {
-  const { id } = req.params;
-  const campground = await Campground.findByIdAndUpdate(id, {
-    ...req.body.campground,
-  });
-  res.redirect(`/campgrounds/${campground._id}`);
-});
+app.put(
+  "/campgrounds/:id",
+  wrapAsync(async (req, res, next) => {
+    const { id } = req.params;
+    const campground = await Campground.findByIdAndUpdate(id, {
+      ...req.body.campground,
+    });
+    res.redirect(`/campgrounds/${campground._id}`);
+  })
+);
 
 // delete
-app.delete("/campgrounds/:id", async (req, res) => {
-  const { id } = req.params;
-  await Campground.findByIdAndDelete(id);
-  res.redirect("/campgrounds");
-});
+app.delete(
+  "/campgrounds/:id",
+  wrapAsync(async (req, res, next) => {
+    const { id } = req.params;
+    await Campground.findByIdAndDelete(id);
+    res.redirect("/campgrounds");
+  })
+);
 
 // error handling
 app.use((err, req, res, next) => {
