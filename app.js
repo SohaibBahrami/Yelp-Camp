@@ -50,6 +50,8 @@ const validateCampground = (req, res, next) => {
   if (error) {
     const msg = error.details.map((el) => el.message).join(",");
     throw new ExpressError(msg, 400);
+  } else {
+    next();
   }
 };
 
@@ -73,6 +75,7 @@ app.get("/campgrounds/new", (req, res) => {
 
 app.post(
   "/campgrounds",
+  validateCampground,
   wrapAsync(async (req, res, next) => {
     const campground = new Campground(req.body.campground);
     await campground.save();
@@ -100,6 +103,7 @@ app.get(
 
 app.put(
   "/campgrounds/:id",
+  validateCampground,
   wrapAsync(async (req, res, next) => {
     const { id } = req.params;
     const campground = await Campground.findByIdAndUpdate(id, {
