@@ -13,7 +13,7 @@ db.once("open", () => {
   console.log("Database connected");
 });
 // importing JOI
-import joi from "joi";
+import Joi from "joi";
 // importing method-override
 import methodOverride from "method-override";
 app.use(methodOverride("_method"));
@@ -58,6 +58,19 @@ app.get("/campgrounds/new", (req, res) => {
 app.post(
   "/campgrounds",
   wrapAsync(async (req, res, next) => {
+    const campgroundSchema = Joi.object({
+      campground: Joi.object({
+        title: Joi.string().required(),
+        location: Joi.string().required(),
+        image: Joi.string().required(),
+        price: Joi.number().required().min(0),
+      }).required(),
+    });
+    const { error } = campgroundSchema.validate(req.body);
+    if (error) {
+      const msg = error.details.map((el) => el.message).join(",");
+      throw new expressError(msg, 400);
+    }
     const campground = new Campground(req.body.campground);
     await campground.save();
     res.redirect(`/campgrounds/${campground._id}`);
