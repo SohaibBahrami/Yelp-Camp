@@ -26,6 +26,8 @@ app.set("views", path.join(__dirname, "/views"));
 // importing project files
 import Campground from "./models/campground.js";
 app.use(express.static("/seeds/index.js"));
+import wrapAsync from "./utilities/wrapAsync.js";
+import expressError from "./utilities/expressError.js";
 // importing ejs-mate
 import engine from "ejs-mate";
 app.engine("ejs", engine);
@@ -47,11 +49,14 @@ app.get("/campgrounds/new", (req, res) => {
   res.render("campgrounds/new.ejs");
 });
 
-app.post("/campgrounds", async (req, res) => {
-  const campground = new Campground(req.body.campground);
-  await campground.save();
-  res.redirect(`/campgrounds/${campground._id}`);
-});
+app.post(
+  "/campgrounds",
+  wrapAsync(async (req, res, next) => {
+    const campground = new Campground(req.body.campground);
+    await campground.save();
+    res.redirect(`/campgrounds/${campground._id}`);
+  })
+);
 
 // show
 app.get("/campgrounds/:id", async (req, res) => {
