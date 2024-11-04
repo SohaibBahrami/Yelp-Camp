@@ -30,6 +30,7 @@ import wrapAsync from "./utilities/wrapAsync.js";
 import expressError from "./utilities/expressError.js";
 // importing ejs-mate
 import engine from "ejs-mate";
+import ExpressError from "./utilities/expressError.js";
 app.engine("ejs", engine);
 
 //* App Codes
@@ -100,9 +101,15 @@ app.delete(
   })
 );
 
+// 404 error
+app.all("*", (req, res, next) => {
+  next(new ExpressError("Page Not Found!", 404));
+});
+
 // error handling
 app.use((err, req, res, next) => {
-  res.send("Something went wrong!");
+  const { statusCode = 500, message = "Something Went Wrong!" } = err;
+  res.status(statusCode).send(message);
 });
 
 // server start
