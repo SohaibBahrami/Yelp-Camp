@@ -12,6 +12,8 @@ db.on("error", console.error.bind(console, "connection error:"));
 db.once("open", () => {
   console.log("Database connected");
 });
+// importing JOI
+import joi from "joi";
 // importing method-override
 import methodOverride from "method-override";
 app.use(methodOverride("_method"));
@@ -56,8 +58,6 @@ app.get("/campgrounds/new", (req, res) => {
 app.post(
   "/campgrounds",
   wrapAsync(async (req, res, next) => {
-    if (!req.body.campground)
-      throw new ExpressError("Invalid Campground Data!", 400);
     const campground = new Campground(req.body.campground);
     await campground.save();
     res.redirect(`/campgrounds/${campground._id}`);
