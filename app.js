@@ -30,8 +30,11 @@ import Campground from "./models/campground.js";
 app.use(express.static("/seeds/index.js"));
 import wrapAsync from "./utilities/wrapAsync.js";
 import ExpressError from "./utilities/expressError.js";
+import Review from "./models/review.js";
 // importing ejs-mate
 import engine from "ejs-mate";
+import campground from "./models/campground.js";
+import review from "./models/review.js";
 app.engine("ejs", engine);
 
 //* App Codes
@@ -120,6 +123,19 @@ app.delete(
     const { id } = req.params;
     await Campground.findByIdAndDelete(id);
     res.redirect("/campgrounds");
+  })
+);
+
+// add reviews
+app.post(
+  "/campgrounds/:id/reviews",
+  wrapAsync(async (req, res) => {
+    const campground = await Campground.findById(req.params.id);
+    const review = new Review(req.body.review);
+    campground.reviews.push(review);
+    await review.save();
+    await campground.save();
+    res.redirect(`/campgrounds/${campground._id}`);
   })
 );
 

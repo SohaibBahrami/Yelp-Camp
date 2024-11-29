@@ -31,7 +31,11 @@
           </form>
         </div>
       </div>
-      <form class="my-3" action="">
+      <form
+        class="my-3"
+        action="/campgrounds/<%= campground._id %>/reviews"
+        method="POST"
+      >
         <h3>Leave a Review</h3>
         <div class="mb-3">
           <label class="form-label" for="rating">Rating: </label>
