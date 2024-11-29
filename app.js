@@ -33,8 +33,6 @@ import ExpressError from "./utilities/expressError.js";
 import Review from "./models/review.js";
 // importing ejs-mate
 import engine from "ejs-mate";
-import campground from "./models/campground.js";
-import review from "./models/review.js";
 app.engine("ejs", engine);
 
 //* App Codes
@@ -50,6 +48,21 @@ const validateCampground = (req, res, next) => {
     }).required(),
   });
   const { error } = campgroundSchema.validate(req.body);
+  if (error) {
+    const msg = error.details.map((el) => el.message).join(",");
+    throw new ExpressError(msg, 400);
+  } else {
+    next();
+  }
+};
+const validateReview = (req, res, next) => {
+  const reviewSchema = Joi.object({
+    review: Joi.object({
+      rating: Joi.number().required().min(1).max(5),
+      body: Joi.string().required(),
+    }).required(),
+  });
+  const { error } = reviewSchema.validate(req.body);
   if (error) {
     const msg = error.details.map((el) => el.message).join(",");
     throw new ExpressError(msg, 400);
@@ -129,6 +142,7 @@ app.delete(
 // add reviews
 app.post(
   "/campgrounds/:id/reviews",
+  validateReview,
   wrapAsync(async (req, res) => {
     const campground = await Campground.findById(req.params.id);
     const review = new Review(req.body.review);
