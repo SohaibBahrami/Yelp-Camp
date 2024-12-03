@@ -2,7 +2,8 @@ import express from "express";
 import wrapAsync from "../utilities/wrapAsync.js";
 import ExpressError from "../utilities/expressError.js";
 import Campground from "../models/campground.js";
-const router = express.Router();
+import Joi from "joi";
+const router = express.Router({ mergeParams: true });
 
 // defining middleware for JOI error handling
 const validateCampground = (req, res, next) => {
