@@ -25,6 +25,8 @@ app.set("views", path.join(__dirname, "/views"));
 // importing ejs-mate
 import engine from "ejs-mate";
 app.engine("ejs", engine);
+// static assets
+app.use(express.static(path.join(__dirname, "public")));
 
 //* Project File Imports
 // importing seeds
