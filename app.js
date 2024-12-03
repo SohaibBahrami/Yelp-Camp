@@ -13,6 +13,8 @@ db.once("open", () => {
 });
 // importing express-session
 import session from "express-session";
+// importing connect-flash
+import flash from "connect-flash";
 // importing method-override
 import methodOverride from "method-override";
 app.use(methodOverride("_method"));
@@ -54,6 +56,14 @@ const sessionConfig = {
   },
 };
 app.use(session(sessionConfig));
+
+// using flash
+app.use(flash());
+app.use((req, res, next) => {
+  res.locals.success = req.flash("success");
+  res.locals.error = req.flash("error");
+  next();
+});
 
 // home page
 app.get("/", (req, res) => {
