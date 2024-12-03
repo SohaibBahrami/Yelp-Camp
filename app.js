@@ -31,6 +31,7 @@ app.use(express.static("/seeds/index.js"));
 import wrapAsync from "./utilities/wrapAsync.js";
 import ExpressError from "./utilities/expressError.js";
 import Review from "./models/review.js";
+import campgrounds from "./routes/campgrounds.js";
 // importing ejs-mate
 import engine from "ejs-mate";
 app.engine("ejs", engine);
@@ -38,23 +39,6 @@ app.engine("ejs", engine);
 //* App Codes
 
 // defining middleware for JOI error handling
-const validateCampground = (req, res, next) => {
-  const campgroundSchema = Joi.object({
-    campground: Joi.object({
-      title: Joi.string().required(),
-      location: Joi.string().required(),
-      image: Joi.string().required(),
-      price: Joi.number().required().min(0),
-    }).required(),
-  });
-  const { error } = campgroundSchema.validate(req.body);
-  if (error) {
-    const msg = error.details.map((el) => el.message).join(",");
-    throw new ExpressError(msg, 400);
-  } else {
-    next();
-  }
-};
 const validateReview = (req, res, next) => {
   const reviewSchema = Joi.object({
     review: Joi.object({
@@ -71,75 +55,13 @@ const validateReview = (req, res, next) => {
   }
 };
 
-// home pages
+// home page
 app.get("/", (req, res) => {
   res.render("home.ejs");
 });
 
-app.get(
-  "/campgrounds",
-  wrapAsync(async (req, res, next) => {
-    const campgrounds = await Campground.find({});
-    res.render("campgrounds/index.ejs", { campgrounds });
-  })
-);
-
-// add
-app.get("/campgrounds/new", (req, res) => {
-  res.render("campgrounds/new.ejs");
-});
-
-app.post(
-  "/campgrounds",
-  validateCampground,
-  wrapAsync(async (req, res, next) => {
-    const campground = new Campground(req.body.campground);
-    await campground.save();
-    res.redirect(`/campgrounds/${campground._id}`);
-  })
-);
-
-// show
-app.get(
-  "/campgrounds/:id",
-  wrapAsync(async (req, res, next) => {
-    const campground = await Campground.findById(req.params.id).populate(
-      "reviews"
-    );
-    res.render("campgrounds/show.ejs", { campground });
-  })
-);
-
-// edit
-app.get(
-  "/campgrounds/:id/edit",
-  wrapAsync(async (req, res, next) => {
-    const campground = await Campground.findById(req.params.id);
-    res.render("campgrounds/edit.ejs", { campground });
-  })
-);
-
-app.put(
-  "/campgrounds/:id",
-  validateCampground,
-  wrapAsync(async (req, res, next) => {
-    const { id } = req.params;
-    const campground = await Campground.findByIdAndUpdate(id, {
-      ...req.body.campground,
-    });
-    res.redirect(`/campgrounds/${campground._id}`);
-  })
-);
-
-// delete
-app.delete(
-  "/campgrounds/:id",
-  wrapAsync(async (req, res, next) => {
-    const { id } = req.params;
-    await Campground.findByIdAndDelete(id);
-    res.redirect("/campgrounds");
-  })
-);
+// campground routes
+app.use("/campgrounds", campgrounds);
 
 // add reviews
 app.post(
