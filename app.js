@@ -11,6 +11,8 @@ db.on("error", console.error.bind(console, "connection error:"));
 db.once("open", () => {
   console.log("Database connected");
 });
+// importing express-session
+import session from "express-session";
 // importing method-override
 import methodOverride from "method-override";
 app.use(methodOverride("_method"));
@@ -38,6 +40,21 @@ import campgrounds from "./routes/campgrounds.js";
 import reviews from "./routes/reviews.js";
 
 //* App Codes
+
+// HTTP sessions
+const sessionConfig = {
+  secret: "thisIsMySecret",
+  resave: false,
+  saveUninitialized: true,
+  cookie: {
+    // this cookie expires in a week in milliseconds
+    expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
+    maxAge: 1000 * 60 * 60 * 24 * 7,
+    httpOnly: true,
+  },
+};
+app.use(session(sessionConfig));
+
 // home page
 app.get("/", (req, res) => {
   res.render("home.ejs");
