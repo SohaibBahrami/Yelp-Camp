@@ -57,6 +57,10 @@ router.get(
     const campground = await Campground.findById(req.params.id).populate(
       "reviews"
     );
+    if (!campground) {
+      req.flash("error", "Cannot find that campground!");
+      return res.redirect("/campgrounds");
+    }
     res.render("campgrounds/show.ejs", { campground });
   })
 );
@@ -66,6 +70,10 @@ router.get(
   "/:id/edit",
   wrapAsync(async (req, res, next) => {
     const campground = await Campground.findById(req.params.id);
+    if (!campground) {
+      req.flash("error", "Cannot find that campground!");
+      return res.redirect("/campgrounds");
+    }
     res.render("campgrounds/edit.ejs", { campground });
   })
 );
