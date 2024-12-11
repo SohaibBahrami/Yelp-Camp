@@ -4,6 +4,7 @@ import ExpressError from "../utilities/expressError.js";
 import Campground from "../models/campground.js";
 import Joi from "joi";
 const router = express.Router({ mergeParams: true });
+import { isLoggedIn } from "../middleware.js";
 
 // defining middleware for JOI error handling
 const validateCampground = (req, res, next) => {
@@ -35,13 +36,14 @@ router.get(
 );
 
 // add
-router.get("/new", (req, res) => {
+router.get("/new", isLoggedIn, (req, res) => {
   res.render("campgrounds/new.ejs");
 });
 
 router.post(
   "/",
   validateCampground,
+  isLoggedIn,
   wrapAsync(async (req, res, next) => {
     const campground = new Campground(req.body.campground);
     await campground.save();
@@ -68,6 +70,7 @@ router.get(
 // edit
 router.get(
   "/:id/edit",
+  isLoggedIn,
   wrapAsync(async (req, res, next) => {
     const campground = await Campground.findById(req.params.id);
     if (!campground) {
@@ -81,6 +84,7 @@ router.get(
 router.put(
   "/:id",
   validateCampground,
+  isLoggedIn,
   wrapAsync(async (req, res, next) => {
     const { id } = req.params;
     const campground = await Campground.findByIdAndUpdate(id, {
@@ -94,6 +98,7 @@ router.put(
 // delete
 router.delete(
   "/:id",
+  isLoggedIn,
   wrapAsync(async (req, res, next) => {
     const { id } = req.params;
     await Campground.findByIdAndDelete(id);
