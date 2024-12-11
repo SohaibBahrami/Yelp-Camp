@@ -3,6 +3,7 @@ const router = express.Router();
 import User from "../models/User.js";
 import wrapAsync from "../utilities/wrapAsync.js";
 import passport from "passport";
+import { isLoggedIn } from "../middleware.js";
 
 router.get("/register", (req, res) => {
   res.render("users/register", { title: "Register" });
@@ -39,5 +40,11 @@ router.post(
     res.redirect("/campgrounds");
   })
 );
+
+router.get("/logout", (req, res) => {
+  req.logout();
+  req.flash("success", "Goodbye");
+  req.redirect("/campgrounds");
+});
 
 export default router;
