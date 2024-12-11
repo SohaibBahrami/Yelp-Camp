@@ -18,6 +18,9 @@ import flash from "connect-flash";
 // importing method-override
 import methodOverride from "method-override";
 app.use(methodOverride("_method"));
+// importing passport
+import passport from "passport";
+import LocalStrategy from "passport-local";
 // importing ejs
 import ejs from "ejs";
 import path from "path";
@@ -40,6 +43,8 @@ import ExpressError from "./utilities/expressError.js";
 // importing routers
 import campgrounds from "./routes/campgrounds.js";
 import reviews from "./routes/reviews.js";
+// importing models
+import User from "./models/User.js";
 
 //* App Codes
 
@@ -64,6 +69,13 @@ app.use((req, res, next) => {
   res.locals.error = req.flash("error");
   next();
 });
+
+// using passport
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
 // home page
 app.get("/", (req, res) => {
