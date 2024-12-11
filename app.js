@@ -41,8 +41,9 @@ app.use(express.static("/seeds/index.js"));
 // importing utilities
 import ExpressError from "./utilities/expressError.js";
 // importing routers
-import campgrounds from "./routes/campgrounds.js";
-import reviews from "./routes/reviews.js";
+import campgroundRoutes from "./routes/campgrounds.js";
+import reviewRoutes from "./routes/reviews.js";
+import userRoutes from "./routes/users.js";
 // importing models
 import User from "./models/User.js";
 
@@ -83,10 +84,13 @@ app.get("/", (req, res) => {
 });
 
 // campground routes
-app.use("/campgrounds", campgrounds);
+app.use("/campgrounds", campgroundRoutes);
 
 // review routes
-app.use("/campgrounds/:id/reviews", reviews);
+app.use("/campgrounds/:id/reviews", reviewRoutes);
+
+// user routes
+app.use("/", userRoutes);
 
 // 404 error
 app.all("*", (req, res, next) => {
