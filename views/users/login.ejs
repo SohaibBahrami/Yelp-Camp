@@ -3,6 +3,7 @@
 <h1>Login</h1>
 <form action="/login" method="post" class="validated-from" novalidate>
   <div class="mb-3">
+    <input type="hidden" name="referer" value="<%= referer %>" />
     <label class="form-label" for="username">Username:</label>
     <input
       class="form-control"

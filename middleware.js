@@ -1,9 +1,8 @@
-export const isLoggedIn = (req, res, next) => {
+const isLoggedIn = (req, res, next) => {
   if (!req.isAuthenticated()) {
-    // store the requested url and return to it after login
-    req.session.returnTo = req.originalUrl;
     req.flash("error", "You must be signed in");
     return res.redirect("/login");
   }
   next();
 };
+export default isLoggedIn;

@@ -63,6 +63,13 @@ const sessionConfig = {
 };
 app.use(session(sessionConfig));
 
+// using passport
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
 // using flash
 app.use(flash());
 app.use((req, res, next) => {
@@ -71,13 +78,6 @@ app.use((req, res, next) => {
   res.locals.error = req.flash("error");
   next();
 });
-
-// using passport
-app.use(passport.initialize());
-app.use(passport.session());
-passport.use(new LocalStrategy(User.authenticate()));
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
 
 // home page
 app.get("/", (req, res) => {

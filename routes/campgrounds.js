@@ -4,7 +4,7 @@ import ExpressError from "../utilities/expressError.js";
 import Campground from "../models/campground.js";
 import Joi from "joi";
 const router = express.Router({ mergeParams: true });
-import { isLoggedIn } from "../middleware.js";
+import isLoggedIn from "../middleware.js";
 
 // defining middleware for JOI error handling
 const validateCampground = (req, res, next) => {

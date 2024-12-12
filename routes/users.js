@@ -3,7 +3,7 @@ const router = express.Router();
 import User from "../models/User.js";
 import wrapAsync from "../utilities/wrapAsync.js";
 import passport from "passport";
-import { isLoggedIn } from "../middleware.js";
+import isLoggedIn from "../middleware.js";
 
 router.get("/register", (req, res) => {
   res.render("users/register", { title: "Register" });
@@ -29,7 +29,7 @@ router.post(
 );
 
 router.get("/login", (req, res) => {
-  res.render("users/login", { title: "Login" });
+  res.render("users/login", { title: "Login", referer: req.headers.referer });
 });
 
 router.post(
@@ -39,15 +39,24 @@ router.post(
     failureRedirect: "/login",
   }),
   wrapAsync(async (req, res) => {
-    req.flash("success", "Welcome back!");
-    const redirectUrl = req.session.returnTo || "/campgrounds";
-    delete req.session.returnTo;
-    res.redirect(redirectUrl);
+    // return to previous url after login
+    if (
+      req.body.referer &&
+      req.body.referer !== undefined &&
+      req.body.referer.slice(-6) !== "/login"
+    ) {
+      res.redirect(req.body.referer);
+      req.flash("success", "Welcome back!");
+    }
   })
 );
 
 router.get("/logout", (req, res) => {
-  req.logout();
+  req.logout(function (err) {
+    if (err) {
+      return next(err);
+    }
+  });
   req.flash("success", "Goodbye");
   res.redirect("/campgrounds");
 });
