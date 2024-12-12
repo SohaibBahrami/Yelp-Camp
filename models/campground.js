@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Types } from "mongoose";
 import Review from "./review.js";
 const Schema = mongoose.Schema;
 
@@ -7,6 +7,10 @@ const CampgroundSchema = new Schema({
   location: String,
   price: Number,
   image: String,
+  author: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
+  },
   reviews: [
     {
       type: Schema.Types.ObjectId,
