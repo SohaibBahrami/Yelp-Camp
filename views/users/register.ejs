@@ -1,16 +1,21 @@
 <% layout('layouts/boilerplate') %>
 
-<h1>Login</h1>
-<form action="/login" method="post" class="validated-from" novalidate>
+<h1>Register</h1>
+<form action="/register" method="post" class="validated-from" novalidate>
   <div class="mb-3">
-    <label class="form-label" for="password">Password:</label>
+    <label class="form-label" for="username">Username:</label>
     <input
       class="form-control"
-      id="password"
+      id="username"
       type="text"
-      name="password"
+      name="username"
       required
     />
+    <div class="valid-feedback">Looks good!</div>
+  </div>
+  <div class="mb-3">
+    <label class="form-label" for="email">Email:</label>
+    <input class="form-control" id="email" type="email" name="email" required />
     <div class="valid-feedback">Looks good!</div>
   </div>
   <div class="mb-3">
@@ -24,5 +29,5 @@
     />
     <div class="valid-feedback">Looks good!</div>
   </div>
-  <button class="btn btn-success">Login</button>
+  <button class="btn btn-success">Register</button>
 </form>

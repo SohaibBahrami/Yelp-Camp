@@ -3,7 +3,7 @@ export const isLoggedIn = (req, res, next) => {
     // store the requested url and return to it after login
     req.session.returnTo = req.originalUrl;
     req.flash("error", "You must be signed in");
-    return req.redirect("/login");
+    return res.redirect("/login");
   }
   next();
 };
