@@ -3,7 +3,7 @@ const router = express.Router();
 import User from "../models/User.js";
 import wrapAsync from "../utilities/wrapAsync.js";
 import passport from "passport";
-import isLoggedIn from "../middleware.js";
+import { isLoggedIn } from "../middleware.js";
 
 router.get("/register", (req, res) => {
   res.render("users/register", { title: "Register" });
