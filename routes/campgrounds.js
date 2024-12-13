@@ -5,7 +5,6 @@ import Joi from "joi";
 const router = express.Router({ mergeParams: true });
 import { isLoggedIn, isAuthor, validateCampground } from "../middleware.js";
 
-
 //* campground routes
 
 router.get(
@@ -39,7 +38,7 @@ router.get(
   "/:id",
   wrapAsync(async (req, res, next) => {
     const campground = await Campground.findById(req.params.id)
-      .populate("reviews")
+      .populate({ path: "reviews", populate: { path: "author" } })
       .populate("author");
     if (!campground) {
       req.flash("error", "Cannot find that campground!");

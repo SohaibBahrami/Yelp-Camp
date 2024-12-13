@@ -1,5 +1,7 @@
 import ExpressError from "./utilities/expressError.js";
 import Campground from "./models/campground.js";
+import Review from "./models/review.js";
+import Joi from "joi";
 
 // middleware for authentication
 export const isLoggedIn = (req, res, next) => {
@@ -51,6 +53,17 @@ export const isAuthor = async (req, res, next) => {
   const { id } = req.params;
   const campground = await Campground.findById(id);
   if (!campground.author.equals(req.user._id)) {
+    req.flash("error", "You do not have permission!");
+    return res.redirect(`/campgrounds/${id}`);
+  }
+  next();
+};
+
+// middleware for review authorization
+export const isReviewAuthor = async (req, res, next) => {
+  const { reviewId, id } = req.params;
+  const review = await Review.findById(reviewId);
+  if (!review.author.equals(req.user._id)) {
     req.flash("error", "You do not have permission!");
     return res.redirect(`/campgrounds/${id}`);
   }
