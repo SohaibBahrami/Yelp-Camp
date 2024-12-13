@@ -1,3 +1,8 @@
+// dotenv
+if (process.env.NODE_ENV !== "production") {
+  import("dotenv").config();
+}
+
 //* Dependency Imports
 // importing express
 import express from "express";

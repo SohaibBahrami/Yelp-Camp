@@ -4,6 +4,8 @@ import Joi from "joi";
 const router = express.Router({ mergeParams: true });
 import { isLoggedIn, isAuthor, validateCampground } from "../middleware.js";
 import campgrounds from "../controllers/campgrounds.js";
+import multer from "multer";
+const upload = multer({ dest: "uploads/" });
 
 //* campground routes
 
@@ -18,6 +20,8 @@ router.post(
   isLoggedIn,
   wrapAsync(campgrounds.addCamp)
 );
+
+router.post("/", upload.array("image"), (req, res) => {});
 
 // show
 router.get("/:id", wrapAsync(campgrounds.showCamp));
