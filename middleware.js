@@ -18,7 +18,15 @@ export const validateCampground = (req, res, next) => {
     campground: Joi.object({
       title: Joi.string().required(),
       location: Joi.string().required(),
-      image: Joi.string().required(),
+      // Update image validation to accept an array of files
+      image: Joi.array()
+        .items(
+          Joi.object({
+            url: Joi.string().required(),
+            filename: Joi.string().required(),
+          })
+        )
+        .required(),
       price: Joi.number().required().min(0),
     }).required(),
   });
@@ -31,7 +39,7 @@ export const validateCampground = (req, res, next) => {
   }
 };
 
-// defining middleware for JOI error handling
+// middleware for JOI error handling
 export const validateReview = (req, res, next) => {
   const reviewSchema = Joi.object({
     review: Joi.object({

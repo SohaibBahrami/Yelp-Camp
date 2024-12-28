@@ -23,9 +23,14 @@ const seedDB = async () => {
       title: `${sample(descriptors)} ${sample(places)}`,
       location: `${cities[random1000].city}, ${cities[random1000].state}`,
       price: price,
-      image: `https://loremflickr.com/750/500?random=${Math.floor(
-        (Math.random() + 1) * 100
-      )}`,
+      image: [
+        {
+          url: `https://loremflickr.com/750/500?random=${Math.floor(
+            (Math.random() + 1) * 100
+          )}`,
+          filename: "YelpCamp",
+        },
+      ],
     });
     await camp.save().catch((err) => {
       console.error("Error saving campground:", err);

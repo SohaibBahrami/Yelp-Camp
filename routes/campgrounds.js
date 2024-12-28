@@ -5,7 +5,8 @@ const router = express.Router({ mergeParams: true });
 import { isLoggedIn, isAuthor, validateCampground } from "../middleware.js";
 import campgrounds from "../controllers/campgrounds.js";
 import multer from "multer";
-const upload = multer({ dest: "uploads/" });
+import { storage } from "../cloudinary/index.js";
+const upload = multer({ storage });
 
 //* campground routes
 
@@ -16,12 +17,11 @@ router.get("/new", isLoggedIn, campgrounds.addCampForm);
 
 router.post(
   "/",
-  validateCampground,
   isLoggedIn,
+  upload.array("image"),
+  validateCampground,
   wrapAsync(campgrounds.addCamp)
 );
-
-router.post("/", upload.array("image"), (req, res) => {});
 
 // show
 router.get("/:id", wrapAsync(campgrounds.showCamp));
@@ -36,9 +36,10 @@ router.get(
 
 router.put(
   "/:id",
-  validateCampground,
   isLoggedIn,
   isAuthor,
+  upload.array("image"),
+  validateCampground,
   wrapAsync(campgrounds.editCamp)
 );
 

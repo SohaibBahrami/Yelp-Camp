@@ -1,6 +1,6 @@
-// dotenv
+import dotenv from "dotenv";
 if (process.env.NODE_ENV !== "production") {
-  import("dotenv").config();
+  dotenv.config();
 }
 
 //* Dependency Imports
